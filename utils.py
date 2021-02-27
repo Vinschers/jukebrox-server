@@ -6,22 +6,18 @@ import os
 
 
 def sendUntilEndOfRequest(app, func, args=(), on_end=lambda ret_func: None):
-    ret = None
-
     def thread():
-        nonlocal ret
         with app.app_context(), app.test_request_context():
-            ret = func(*args)
+            return func(*args)
 
     def exec():
-        nonlocal ret
         executor = concurrent.futures.ThreadPoolExecutor()
-
         future = executor.submit(thread)
 
-        while not ret:
+        while not future.done():
             yield b""
             time.sleep(1)
+        ret = future.result()
         on_end(ret)
         yield ret
 
