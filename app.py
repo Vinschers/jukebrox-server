@@ -1,10 +1,14 @@
 from flask import Flask
-from drive import Drive
 import json
+
+from drive import Drive
+from utils import sendUntilEndOfRequest, path_to
+
 
 PORT = 5643
 app = Flask(__name__)
-gdrive = Drive()
+# TODO: https://git-secret.io/
+gdrive = Drive(path_to(__file__, 'credentials/credentials.json'))
 
 
 @app.route('/')

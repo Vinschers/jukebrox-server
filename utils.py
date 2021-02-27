@@ -2,6 +2,7 @@ from flask import Response, stream_with_context
 import concurrent.futures
 import time
 import re
+import os
 
 
 def sendUntilEndOfRequest(app, func, args=(), on_end=lambda ret_func: None):
@@ -25,6 +26,11 @@ def sendUntilEndOfRequest(app, func, args=(), on_end=lambda ret_func: None):
         yield ret
 
     return Response(stream_with_context(exec()))
+
+
+def path_to(root, path):
+    root = os.path.abspath(os.path.dirname(root))
+    return os.path.join(root, path)
 
 
 _nsre = re.compile('([0-9]+)')
