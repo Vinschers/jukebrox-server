@@ -1,19 +1,16 @@
 from flask import Flask
-import json
-
-from drive import Drive
-from utils import sendUntilEndOfRequest, path_to
+import api
 
 
 PORT = 5643
 app = Flask(__name__)
-# TODO: https://git-secret.io/
-gdrive = Drive(path_to(__file__, 'credentials/credentials.json'))
+
+app.register_blueprint(api.blueprint, url_prefix='/api')
 
 
 @app.route('/')
 def index():
-    return json.dumps(gdrive.getChildren('1wjdeBBMqQBUN_MUY19xic32zrkQ8gtYq'))
+    return 'Welcome to Jukebrox! Web app under development.'
 
 
 if __name__ == '__main__':

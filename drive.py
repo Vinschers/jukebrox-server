@@ -26,16 +26,16 @@ class Drive:
 
         self.drive = build('drive', 'v3', http=http)
 
-    def getFile(self, file_id):
+    def get(self, file_id):
         return self.drive.files().get(fileId=file_id, fields="*").execute()
 
-    def getChildren(self, file_id):
+    def get_children(self, file_id):
         q = "'"+file_id+"' in parents and trashed = false"
         children = self.drive.files().list(q=q, fields="*").execute()['files']
         children.sort(key=natural_sort_key)
         return children
 
-    def createFolder(self, name, parent):
+    def create_folder(self, name, parent):
         file_metadata = {
             'name': name,
             'mimeType': 'application/vnd.google-apps.folder',
@@ -46,17 +46,16 @@ class Drive:
             body=file_metadata, fields='id').execute()
         return folder.get('id')
 
-    def downloadFile(self, file_id):
+    def download(self, file_id):
         request = self.drive.files().get_media(fileId=file_id)
         fh = ChunkHolder()
         downloader = MediaIoBaseDownload(fh, request)
         done = False
         while done is False:
             status, done = downloader.next_chunk()
-            print("Download %d%%." % int(status.progress() * 100))
             yield fh.chunk
 
-    def downloadChunkFromFile(self, file_id, start, end):
+    def download_chunk(self, file_id, start, end):
         request = self.drive.files().get_media(fileId=file_id)
         request.headers["Range"] = "bytes={}-{}".format(start, end)
         fh = io.BytesIO(request.execute())
