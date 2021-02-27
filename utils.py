@@ -5,7 +5,7 @@ import re
 import os
 
 
-def sendUntilEndOfRequest(app, func, args=(), on_end=lambda ret_func: None):
+def send_until_end_of_request(app, func, args=(), on_end=lambda ret_func: None):
     def thread():
         with app.app_context(), app.test_request_context():
             return func(*args)
