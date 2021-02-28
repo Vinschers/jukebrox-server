@@ -26,14 +26,20 @@ class Drive:
 
         self.drive = build('drive', 'v3', http=http)
 
-    def get(self, file_id):
+    def get_file(self, file_id):
         return self.drive.files().get(fileId=file_id, fields="*").execute()
 
-    def get_children(self, file_id):
+    def list_children(self, file_id):
         q = "'"+file_id+"' in parents and trashed = false"
         children = self.drive.files().list(q=q, fields="*").execute()['files']
         children.sort(key=natural_sort_key)
         return children
+
+    def get_everything(self):
+        q = "trashed=false"
+        fields = "*"
+
+        return self.drive.files().list(q=q, fields=fields).execute()['files']
 
     def create_folder(self, name, parent):
         file_metadata = {
