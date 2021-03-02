@@ -24,8 +24,7 @@ def setup_secrets_structure():
 
 
 setup_secrets_structure()
-#gdrive = Drive(client_secret_path, credentials_path)
-gdrive = None
+gdrive = Drive(client_secret_path, credentials_path)
 
 
 @blueprint.route('/')
