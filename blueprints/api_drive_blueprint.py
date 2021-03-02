@@ -23,7 +23,7 @@ def setup_secrets_structure():
             client_secret.write(environ.get('CLIENT_SECRET'))
 
 
-setup_secrets_structure()
+#setup_secrets_structure()
 gdrive = Drive(client_secret_path, credentials_path)
 
 

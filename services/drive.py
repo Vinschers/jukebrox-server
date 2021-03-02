@@ -13,6 +13,7 @@ from utils import natural_sort_key, ChunkHolder
 
 class Drive:
     def __init__(self, client_secret_path, credentials_path):
+        credentials_path = 'google-credentials.json'
         SCOPE = 'https://www.googleapis.com/auth/drive'
 
         store = Storage(credentials_path)
