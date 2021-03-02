@@ -1,14 +1,15 @@
 from flask import Blueprint, Response
 import json
+import os
 
-from drive import Drive
+from services.drive import Drive
 from utils import path_to
 
-blueprint = Blueprint('blueprint', __name__)
+blueprint = Blueprint('drive', __name__)
 
 # TODO: https://git-secret.io/
-CREDENTIALS_FILE = path_to(__file__, 'credentials/credentials.json')
-CLIENTSECRET_FILE = path_to(__file__, 'credentials/client_secret.json')
+CREDENTIALS_FILE = os.path.abspath('credentials/credentials.json')
+CLIENTSECRET_FILE = os.path.abspath('credentials/client_secret.json')
 
 gdrive = Drive(CREDENTIALS_FILE, CLIENTSECRET_FILE)
 
