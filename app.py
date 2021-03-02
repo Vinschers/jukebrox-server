@@ -1,10 +1,11 @@
 from flask import Flask
+from os import environ
 
 from blueprints.index_blueprint import blueprint as index_blueprint
 from blueprints.api_drive_blueprint import blueprint as api_drive_blueprint
 
 
-PORT = 5643
+PORT = environ.get("PORT", 5643)
 app = Flask(__name__)
 
 def register_blueprints():

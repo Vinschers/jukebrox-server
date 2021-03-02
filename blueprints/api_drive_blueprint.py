@@ -1,17 +1,30 @@
 from flask import Blueprint, Response
 import json
 import os
+from os import environ
+from os.path import abspath, isdir, isfile, join
 
 from services.drive import Drive
 from utils import path_to
 
+SECRETS_PATH = abspath(environ.get('SECRETS_PATH', 'secrets'))
+
 blueprint = Blueprint('drive', __name__)
 
-# TODO: https://git-secret.io/
-CREDENTIALS_FILE = os.path.abspath('credentials/credentials.json')
-CLIENTSECRET_FILE = os.path.abspath('credentials/client_secret.json')
+SECRETS_PATH = abspath('secrets')
+client_secret_path = join(SECRETS_PATH, 'client_secret.json')
+credentials_path = join(SECRETS_PATH, 'credentials.json')
 
-gdrive = Drive(CREDENTIALS_FILE, CLIENTSECRET_FILE)
+def setup_secrets_structure():
+    if not isdir(SECRETS_PATH):
+        os.mkdir(SECRETS_PATH)
+    if not isfile(client_secret_path):
+        with open(client_secret_path, 'w') as client_secret:
+            client_secret.write(environ.get('CLIENT_SECRET'))
+
+
+setup_secrets_structure()
+gdrive = Drive(client_secret_path, credentials_path)
 
 
 @blueprint.route('/')

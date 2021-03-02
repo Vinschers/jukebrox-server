@@ -1,6 +1,6 @@
 __pycache__/
 .mypy_cache/
 .venv/
-credentials/
+secrets/*
 
 venv.bat
