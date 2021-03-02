@@ -6,12 +6,13 @@ from apiclient.http import MediaIoBaseDownload
 from httplib2 import Http
 
 import io
+import os
 
 from utils import natural_sort_key, ChunkHolder
 
 
 class Drive:
-    def __init__(self, credentials_path, client_secrets_path=''):
+    def __init__(self, client_secret_path, credentials_path):
         SCOPE = 'https://www.googleapis.com/auth/drive'
 
         store = Storage(credentials_path)
@@ -19,7 +20,7 @@ class Drive:
 
         if not credentials or credentials.invalid:
             flow = flow_from_clientsecrets(
-                client_secrets_path, SCOPE)
+                client_secret_path, SCOPE)
             credentials = run_flow(flow, store)
 
         http = credentials.authorize(Http())
