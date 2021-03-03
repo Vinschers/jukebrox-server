@@ -7,24 +7,12 @@ from os.path import abspath, isdir, isfile, join
 from services.drive import Drive
 from utils import path_to
 
-SECRETS_PATH = abspath(environ.get('SECRETS_PATH', 'secrets'))
-
 blueprint = Blueprint('drive', __name__)
 
-SECRETS_PATH = abspath('secrets')
-client_secret_path = join(SECRETS_PATH, 'client_secret.json')
-credentials_path = join(SECRETS_PATH, 'credentials.json')
+client_secret_path = join(abspath('secrets'), 'client_secret.json')
+credentials_json = environ.get('GOOGLE_CREDENTIALS', '')
 
-def setup_secrets_structure():
-    if not isdir(SECRETS_PATH):
-        os.mkdir(SECRETS_PATH)
-    if not isfile(client_secret_path):
-        with open(client_secret_path, 'w') as client_secret:
-            client_secret.write(environ.get('CLIENT_SECRET'))
-
-
-#setup_secrets_structure()
-gdrive = Drive(client_secret_path, credentials_path)
+gdrive = Drive(client_secret_path, credentials_json)
 
 
 @blueprint.route('/')

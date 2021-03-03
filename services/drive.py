@@ -1,25 +1,34 @@
 from oauth2client.file import Storage
-from oauth2client.client import flow_from_clientsecrets
+from oauth2client.client import flow_from_clientsecrets, OAuth2Credentials
 from oauth2client.tools import run_flow
 from apiclient.discovery import build
 from apiclient.http import MediaIoBaseDownload
+from google.auth.transport.requests import Request
 from httplib2 import Http
 
 import io
 import os
+import datetime
 
 from utils import natural_sort_key, ChunkHolder
 
 
 class Drive:
-    def __init__(self, client_secret_path, credentials_path):
-        credentials_path = 'google-credentials.json'
+    CREDENTIALS_PATH = '/secrets/credentials.json'
+
+    def __init__(self, client_secret_path, credentials_json):
         SCOPE = 'https://www.googleapis.com/auth/drive'
 
-        store = Storage(credentials_path)
-        credentials = store.get()
+        store = Storage(self.CREDENTIALS_PATH)
+        try:
+            credentials = OAuth2Credentials.from_json(credentials_json)
 
-        if not credentials or credentials.invalid:
+            if not credentials or credentials.invalid:
+                if credentials and credentials.token_expiry < datetime.datetime.utcnow() and credentials.refresh_token:
+                    credentials.refresh(Request())
+                else:
+                    raise Exception()
+        except:
             flow = flow_from_clientsecrets(
                 client_secret_path, SCOPE)
             credentials = run_flow(flow, store)
