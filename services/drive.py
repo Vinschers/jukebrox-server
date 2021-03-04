@@ -14,7 +14,7 @@ from utils import natural_sort_key, ChunkHolder
 
 
 class Drive:
-    CREDENTIALS_PATH = '/secrets/credentials.json'
+    CREDENTIALS_PATH = './secrets/credentials.json'
 
     def __init__(self, client_secret_path, credentials_json):
         SCOPE = 'https://www.googleapis.com/auth/drive'

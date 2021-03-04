@@ -4,3 +4,4 @@ __pycache__/
 secrets/*
 
 venv.bat
+env.py

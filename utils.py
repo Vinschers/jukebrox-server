@@ -44,3 +44,25 @@ class ChunkHolder(object):
     def write(self, chunk):
         """Save current chunk"""
         self.chunk = chunk
+
+def fix_tag_path(tag_path: list) -> list:
+    if tag_path is None:
+        return []
+
+    tag_path_dict = {tag['id']: tag for tag in tag_path}
+    new_tag_path = []
+
+    def try_append(tag):
+        parent = tag['parent']
+        if parent == 0 or parent == new_tag_path[-1]['id']:
+            new_tag_path.append({'id': tag['id'], 'name': tag['name']})
+            tag_path.remove(tag)
+            return
+        try_append(tag_path_dict[parent])
+        try_append(tag)
+
+    while tag_path:
+        for tag in tag_path:
+            try_append(tag)
+    
+    return new_tag_path
