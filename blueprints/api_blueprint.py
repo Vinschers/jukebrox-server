@@ -6,7 +6,7 @@ from os.path import abspath, join
 
 from services.drive import Drive
 from services.database import Database
-from utils import path_to, fix_tag_path
+from utils import path_to, create_drive_path, fix_tag_path
 
 blueprint = Blueprint('api', __name__)
 
@@ -43,37 +43,14 @@ def download(file_id):
 @blueprint.route('/<root_id>/buildTree')
 def buildTree(root_id):
     all_files = gdrive.get_everything()
-    parents_map = {}
-    
-    for file in all_files:
-        if not 'parents' in file:
-            continue
-        parent = file['parents'][0]
-        if not parent in parents_map:
-            parents_map[parent] = []
-        parents_map[parent].append(file)
-    
-    files_dict = {}
-
-    def create_drive_path(folder, path):
-        children = parents_map[folder['id']]
-        for child in children:
-            if not 'folder' in child['mimeType']:
-                child['drivePath'] = path
-                files_dict[child['id']] = child
-            else:
-                new_path = list(path)
-                new_path.append({'id': child['id'], 'name': child['name']})
-                create_drive_path(child, new_path)
-    
     root = gdrive.get_file(root_id)
-    create_drive_path(root, [{'id': root['id'], 'name': root['name']}])
+
+    files_dict = create_drive_path(all_files=all_files, root=root, drive_path_key='drivePath')
 
     tags_dict = db.get_tags_from_files(files_dict.keys())
 
     for file_id, tags in tags_dict.items():
-        tags_path = [{'id': tag['id'], 'name': tag['name'], 'parent': tag['parent']} for tag in tags]
-        files_dict[file_id]['tagPath'] = tags_path
+        files_dict[file_id]['tagPath'] = tags
 
     for file_id, file in files_dict.items():
         file['tagPath'] = fix_tag_path(file['tagPath'] if 'tagPath' in file else None)
